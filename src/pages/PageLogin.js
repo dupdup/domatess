@@ -1,6 +1,7 @@
 import { Button, TextField } from "@material-ui/core";
 import { FirebaseAuthConsumer } from "@react-firebase/auth";
 import React, { useState } from "react";
+
 function PageLogin() {
   const [customerId, setCustomerIdState] = useState([]);
   const handleGoogleSignIn = (firebase) => {
@@ -11,10 +12,9 @@ function PageLogin() {
       .then((loginInfo) => {
         console.log(loginInfo);
         const db = firebase.firestore();
-        const x = {};
-        x[loginInfo.user.email] = customerId;
-        console.log(x);
-        db.collection("/info").doc("users").set(x);
+        db.collection("/info")
+          .doc("users")
+          .set({ [loginInfo.user.email]: customerId }, { merge: true });
       });
   };
 

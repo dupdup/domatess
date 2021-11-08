@@ -68,6 +68,7 @@ function PageTodolist() {
           products={products}
           customerId={customerId}
         />
+        <Header />
       </main>
     </>
   );

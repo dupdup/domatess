@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { FirebaseAuthConsumer } from "@react-firebase/auth";
 import Box from "../Box";
+import { firebase } from "@firebase/app";
+import groupBy from "lodash/groupBy";
 
 function Header(props) {
   const { tasks } = props;
@@ -10,7 +12,6 @@ function Header(props) {
         <FirebaseAuthConsumer>
           {({ user }) => <OverviewBox tasks={tasks} user={user} />}
         </FirebaseAuthConsumer>
-        <CatFactBox />
       </div>
     </header>
   );
@@ -25,8 +26,26 @@ function OverviewBox(props) {
   // We do not need to use useState here, because we do not need to keep
   // a state of the task list length. This is purely a simple calculation
   // done on the passed prop.
-  const taskListLength = tasks.filter((task) => !task.isComplete).length;
+  const taskListLength =
+    tasks && tasks.filter((task) => !task.isComplete).length;
 
+  useState(() => {
+    console.log("22");
+    const db = firebase.firestore();
+    let orders = [];
+    db.collection("/tasks")
+      .get()
+      .then((x) => {
+        x.forEach((a) => {
+          orders.push(...a.data().tasks);
+          console.log(a.data());
+        });
+      })
+      .then((a) => {
+        console.log(a);
+        console.log(groupBy(orders, (n) => n.orderDate));
+      });
+  });
   // This effect runs on component mount, so that it will fetch data from
   // localStorage when it is loaded.
   useEffect(() => {
