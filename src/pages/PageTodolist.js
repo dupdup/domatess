@@ -41,13 +41,10 @@ function PageTodolist() {
 
           docRef.get().then((doc) => {
             if (doc.exists) {
+              console.log({ x: doc.data().tasks });
               setTasksState(doc.data().tasks);
-            } else {
-              setTasksState([]);
             }
           });
-        } else {
-          setCustomerIdState([]);
         }
       });
     infoDocRef
@@ -72,7 +69,6 @@ function PageTodolist() {
           customerId={customerId}
         />
       </main>
-      <Header tasks={tasks} />
     </>
   );
 }

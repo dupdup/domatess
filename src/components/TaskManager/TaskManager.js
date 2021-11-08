@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Button, Select, TextField } from "@material-ui/core";
+import React, { useState } from "react";
+import { Button, TextField } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { firebase } from "@firebase/app";
 import moment from "moment/moment.js";
 
@@ -15,6 +16,18 @@ function TaskManager(props) {
   const [newTaskText, setNewTaskText] = useState("");
 
   const [newQuantity, setNewQuantity] = useState("");
+
+  useState(() => {
+    const db = firebase.firestore();
+    const dataId = getOrderDate() + "-" + customerId;
+    const tasksRef = db.collection("/tasks").doc(dataId);
+    console.log(dataId);
+    tasksRef.get("tasks").then((tasks) => {
+      console.log({ a: tasks.data() });
+      if (tasks.exists) setTasks(tasks.data().tasks);
+      else setTasks([]);
+    });
+  });
 
   function handleAddTask(event) {
     // React honours default browser behavior and the
@@ -43,29 +56,11 @@ function TaskManager(props) {
     setNewQuantity("");
     setNewTaskText("");
     setTasks(newTasks);
-  }
-
-  // Hook to watch for any changes in tasks. If there are changes,
-  // an update to our Firestore database will be dispatched
-  useEffect(() => {
+    const dataId = getOrderDate() + "-" + customerId;
     const db = firebase.firestore();
-    const infoDocRef = db.collection("/info");
-
-    infoDocRef
-      .doc("users")
-      .get(firebase.auth().currentUser?.email)
-      .then((doc) => {
-        const email = firebase.auth().currentUser?.email;
-        console.log(email);
-        if (doc.exists) {
-          const dataId = getOrderDate() + "-" + doc.data()[email];
-          const docRef = db.collection("/tasks").doc(dataId);
-          docRef.set({ tasks: tasks });
-        } else {
-          setTasks([]);
-        }
-      });
-  }, [tasks]);
+    const tasksRef = db.collection("/tasks").doc(dataId);
+    tasksRef.set({ tasks: newTasks });
+  }
 
   function getOrderDate() {
     var date = moment().hour() < 9 ? moment() : moment().add(1, "days");
@@ -86,20 +81,25 @@ function TaskManager(props) {
               setNewQuantity(event.target.value);
             }}
           />
-          <Select
+          <Autocomplete
             className={styles.descTextField}
-            label="Description"
-            value={newTaskText}
-            onChange={(event) => {
-              setNewTaskText(event.target.value);
+            options={products}
+            onChange={(event, newValue) => {
+              setNewTaskText(newValue);
             }}
-          >
-            {products.map((n) => (
-              <option value={n} key={n}>
-                {n}
-              </option>
-            ))}
-          </Select>
+            inputValue={newTaskText}
+            onInputChange={(event, newInputValue) => {
+              setNewTaskText(newInputValue);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Ürün"
+                variant="outlined"
+                fullWidth
+              />
+            )}
+          />
           <Button type="submit" variant="contained" color="primary">
             Add
           </Button>
@@ -108,7 +108,7 @@ function TaskManager(props) {
 
       <Box>
         <h2>{getOrderDate()}</h2>
-        {tasks.length > 0 ? (
+        {tasks && tasks.length > 0 ? (
           <TaskList tasks={tasks} setTasks={setTasks} />
         ) : (
           <p>No tasks yet! Add one above!</p>
