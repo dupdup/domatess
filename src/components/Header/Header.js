@@ -43,7 +43,7 @@ function OverviewBox(props) {
       })
       .then((a) => {
         console.log(a);
-        console.log(groupBy(orders, (n) => n.orderDate));
+        console.log(groupBy(orders, (n) => n.orderDate + n.description));
       });
   });
   // This effect runs on component mount, so that it will fetch data from

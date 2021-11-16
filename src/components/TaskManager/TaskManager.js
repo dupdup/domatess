@@ -50,6 +50,7 @@ function TaskManager(props) {
         description: description,
         customerId: customerId,
         orderDate: getOrderDate(),
+        orderUser: firebase.auth().currentUser?.email,
         created: firebase.firestore.Timestamp.now()
       }
     ];
@@ -67,6 +68,22 @@ function TaskManager(props) {
     return date.format("DD-MM-YYYY");
   }
 
+  function deleteTask(toToggleTask, toToggleTaskIndex) {
+    const newTasks = [
+      // Once again, this is the spread operator
+      ...tasks.slice(0, toToggleTaskIndex),
+      ...tasks.slice(toToggleTaskIndex + 1)
+    ];
+    // We set new tasks in such a complex way so that we maintain immutability
+    // Read this article to find out more:
+    // https://blog.logrocket.com/immutability-in-react-ebe55253a1cc/
+    setTasks(newTasks);
+    const dataId = getOrderDate() + "-" + customerId;
+    const db = firebase.firestore();
+    const tasksRef = db.collection("/tasks").doc(dataId);
+    tasksRef.set({ tasks: newTasks });
+  }
+
   return (
     <>
       <Box>
@@ -75,7 +92,7 @@ function TaskManager(props) {
           <TextField
             type="number"
             className={styles.descTextField}
-            label="Quantity"
+            label="Kg/Adet"
             value={newQuantity}
             onChange={(event) => {
               setNewQuantity(event.target.value);
@@ -109,7 +126,7 @@ function TaskManager(props) {
       <Box>
         <h2>{getOrderDate()}</h2>
         {tasks && tasks.length > 0 ? (
-          <TaskList tasks={tasks} setTasks={setTasks} />
+          <TaskList tasks={tasks} setTasks={setTasks} deleteTask={deleteTask} />
         ) : (
           <p>No tasks yet! Add one above!</p>
         )}
@@ -120,25 +137,13 @@ function TaskManager(props) {
 
 function TaskList(props) {
   const { tasks, setTasks } = props;
-
-  function deleteTask(toToggleTask, toToggleTaskIndex) {
-    const newTasks = [
-      // Once again, this is the spread operator
-      ...tasks.slice(0, toToggleTaskIndex),
-      ...tasks.slice(toToggleTaskIndex + 1)
-    ];
-    // We set new tasks in such a complex way so that we maintain immutability
-    // Read this article to find out more:
-    // https://blog.logrocket.com/immutability-in-react-ebe55253a1cc/
-    setTasks(newTasks);
-  }
-
+  const { deleteTask } = props;
   return (
     <table style={{ margin: "0 auto", width: "100%" }}>
       <thead>
         <tr>
-          <th>Quantity</th>
-          <th>Task</th>
+          <th>Kg/Adet</th>
+          <th>Ürün</th>
           <th>Completed</th>
         </tr>
       </thead>
