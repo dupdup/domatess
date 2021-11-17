@@ -87,7 +87,7 @@ function TaskManager(props) {
   return (
     <>
       <Box>
-        <h2>Ürün Ekle</h2>
+        <h3>Ürün Ekle</h3>
         <form className={styles.addTaskForm} onSubmit={handleAddTask}>
           <TextField
             type="number"
@@ -99,7 +99,7 @@ function TaskManager(props) {
             }}
           />
           <Autocomplete
-            className={styles.descTextField}
+            className={styles.autocomplete}
             options={products}
             onChange={(event, newValue) => {
               setNewTaskText(newValue);
@@ -117,8 +117,13 @@ function TaskManager(props) {
               />
             )}
           />
-          <Button type="submit" variant="contained" color="primary">
-            Add
+          <Button
+            disabled={!newTaskText || !newQuantity}
+            type="submit"
+            variant="contained"
+            color="primary"
+          >
+            Ekle
           </Button>
         </form>
       </Box>

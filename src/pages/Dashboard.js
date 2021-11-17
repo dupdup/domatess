@@ -67,7 +67,7 @@ function Dashboard() {
           )}
         </tbody>
       </table>
-      {JSON.stringify(summary)}
+      <div style={{ padding: "10px Auto" }}>{JSON.stringify(summary)}</div>
     </>
   );
 }
