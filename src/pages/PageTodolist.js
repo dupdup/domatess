@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { firebase } from "@firebase/app";
 import moment from "moment/moment.js";
 
-import Header from "../components/Header";
 import TaskManager from "../components/TaskManager";
 
 function PageTodolist() {
@@ -33,7 +32,6 @@ function PageTodolist() {
       .get(firebase.auth().currentUser?.email)
       .then((doc) => {
         const email = firebase.auth().currentUser?.email;
-        console.log(email);
         if (doc.exists) {
           const dataId = getOrderDate() + "-" + doc.data()[email];
           setCustomerIdState(doc.data()[email]);
@@ -41,7 +39,6 @@ function PageTodolist() {
 
           docRef.get().then((doc) => {
             if (doc.exists) {
-              console.log({ x: doc.data().tasks });
               setTasksState(doc.data().tasks);
             }
           });
@@ -68,7 +65,6 @@ function PageTodolist() {
           products={products}
           customerId={customerId}
         />
-        <Header />
       </main>
     </>
   );

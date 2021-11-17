@@ -87,7 +87,7 @@ function TaskManager(props) {
   return (
     <>
       <Box>
-        <h2>Add Tasks</h2>
+        <h2>Ürün Ekle</h2>
         <form className={styles.addTaskForm} onSubmit={handleAddTask}>
           <TextField
             type="number"
@@ -126,7 +126,7 @@ function TaskManager(props) {
       <Box>
         <h2>{getOrderDate()}</h2>
         {tasks && tasks.length > 0 ? (
-          <TaskList tasks={tasks} setTasks={setTasks} deleteTask={deleteTask} />
+          <TaskList tasks={tasks} deleteTask={deleteTask} />
         ) : (
           <p>No tasks yet! Add one above!</p>
         )}
@@ -136,7 +136,7 @@ function TaskManager(props) {
 }
 
 function TaskList(props) {
-  const { tasks, setTasks } = props;
+  const { tasks } = props;
   const { deleteTask } = props;
   return (
     <table style={{ margin: "0 auto", width: "100%" }}>

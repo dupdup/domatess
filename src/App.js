@@ -12,11 +12,12 @@ import {
   Toolbar,
   Typography
 } from "@material-ui/core";
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PageTodolist from "./pages/PageTodolist";
 import PageLogin from "./pages/PageLogin";
 
 import "./styles.css";
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   return (
@@ -25,7 +26,12 @@ export default function App() {
       <div style={{ maxWidth: "64rem", margin: "0 auto" }}>
         <FirebaseAuthConsumer>
           <IfFirebaseAuthed>
-            <PageTodolist />
+            <Router>
+              <Routes>
+                <Route path="/" element={<PageTodolist />} />
+                <Route path="/dash" element={<Dashboard />} />
+              </Routes>
+            </Router>
           </IfFirebaseAuthed>
           <IfFirebaseUnAuthed>
             <PageLogin />
@@ -56,7 +62,7 @@ function AppShell() {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1, textAlign: "left" }}>
-          Todo List
+          Novahal
         </Typography>
         <IfFirebaseAuthed>
           {({ user, firebase }) => (
